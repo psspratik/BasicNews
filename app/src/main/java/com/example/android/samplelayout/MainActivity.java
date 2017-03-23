@@ -1,18 +1,23 @@
 package com.example.android.samplelayout;
 
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+import android.net.Uri;
+import android.graphics.drawable.Drawable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -46,32 +51,32 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... arg0) {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "https://content.guardianapis.com/search?api-key=78bc797b-6b2c-448f-9574-bff325a5beba";
+            String url = "http://webhose.io/search?token=9c55cbb1-2f1c-4700-9c1e-67e685152506&format=json&q=Indian%20Startup";
             String jsonStr = sh.makeServiceCall(url);
 
             Log.e(TAG, "Response from url: " + jsonStr);
             if (jsonStr != null) {
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
-
                     // Getting JSON Array node
-                    JSONObject responseObject = jsonObj.getJSONObject("response");
-                    JSONArray firstResult = responseObject.getJSONArray("results");
+                    //JSONObject responseObject = jsonObj.getJSONObject("response");
+                    JSONArray responseArray = jsonObj.getJSONArray("posts");
                     // looping through All Contacts
-                    for (int i = 0; i < firstResult.length(); i++) {
+                    for (int i = 0; i < responseArray.length(); i++) {
 
 
-                        JSONObject firstObject = firstResult.getJSONObject(i);
+                        JSONObject firstObject = responseArray.getJSONObject(i);
+                        //JSONObject titleObject = firstObject.getJSONObject("title");
                         // Extract out the title, time, and tsunami values
 
-                        String Id = firstObject.getString("sectionId");
-                        String title = firstObject.getString("webTitle");
+                        //String image = firstObject.getString("main_image");
+                        String title = firstObject.getString("title");
 
                         // tmp hash map for single contact
-                        HashMap<String, String> contact = new HashMap<>();
+                        HashMap<String , String> contact = new HashMap<>();
 
                         // adding each child node to HashMap key => value
-                        //contact.put("id", Id);
+                        //contact.put("pic", image);
                         contact.put("name", title);
 
                         // adding contact to contact list
@@ -108,8 +113,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            ListAdapter adapter = new SimpleAdapter(MainActivity.this, contactList,R.layout.list_item, new String[]{ "id","name"}, new int[]{R.id.id, R.id.name});
+            ListAdapter adapter = new SimpleAdapter(MainActivity.this, contactList,R.layout.list_item, new String[]{"name"}, new int[]{ R.id.name});
             lv.setAdapter(adapter);
         }
     }
+
+
+
 }
